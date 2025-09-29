@@ -120,7 +120,7 @@ void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zig
       bool permit = true;
       int t = 0;     
       double tp = 8 * atr, sl = 4 * atr;
-      double tp2 = 10 * atr2, sl2 = 5 * atr2;
+      double tp2 = 4 * atr2, sl2 = 4 * atr2;
       double cp = iClose(market,tf,0);
       double ema = iMA(market,tf,200,0,MODE_EMA,PRICE_CLOSE,shift);
       double ema2 = iMA(market,tf,200,0,MODE_EMA,PRICE_CLOSE,0);
@@ -171,7 +171,7 @@ void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zig
             //t = OrderSend(market,OP_BUYSTOP,lotsize,zigzag,8,sl2,tp2,mdesc);
             //t = OrderSend(market,OP_BUYLIMIT,lotsize,zigzag,8,sl2,tp2,mdesc);
             t = OrderSend(market,OP_BUY,lotsize,Ask,8,sl,tp,mdesc);
-            t = OrderSend(market,OP_BUY,lotsize,Ask,8,sl2,tp2,mdesc + " extra");
+            t = OrderSend(market,OP_BUY,lotsize,Ask,8,sl2,tp2,mdesc);
             if(t < 1){
                Print(market," Failed to Buy");
                /*t = OrderSend(market,OP_BUY,lotsize,zigzag,8,sl,tp,mdesc);
