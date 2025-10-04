@@ -14,7 +14,7 @@ extern ENUM_TIMEFRAMES tf = NULL; //Time Frame
 extern string mdesc = "dtrade";
 extern double risk = 0.01;
 double l_zigzag = 0;
-extern int total_market = 2;
+extern int total_market = 10;
 extern double lotsize = 0.01;
 //Things to do involve saving last entry on a 4 array variable
 int OnInit()
@@ -127,7 +127,7 @@ void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zig
       int l_t = 0;
       for(int i = 0; i < OrdersTotal(); i++){
          if(OrderSelect(i,SELECT_BY_POS)){
-            if(market == OrderSymbol() && zigzag == l_zigzag){
+            if(market == OrderSymbol() || zigzag == l_zigzag){
                permit = false;
             }
          }
