@@ -21,6 +21,7 @@ int OnInit()
   {
 //---
   Alert("System is currently running on ", Symbol());
+  Comment("Dbot has started ",GetTickCount());
 //---
    return(INIT_SUCCEEDED);
   }
@@ -42,6 +43,7 @@ void OnTick()
 //---
    // Take the process step by step
    string market = Symbol();
+   Comment("Currently running on ",market," ",GetTickCount());
    //double ema = iMA(market,tf,50,0,MODE_EMA,PRICE_CLOSE,0);
    double zigzag = iCustom(market,tf,"zigzag",0,0);
    double atr = iATR(market,tf,14,0);
@@ -150,17 +152,9 @@ void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zig
             t = OrderSend(market,OP_SELL,lotsize,Bid,8,sl2,tp2,mdesc);
             if(t < 1){
                Print(market," Failed to Sell");
-               /*t = OrderSend(market,OP_SELL,lotsize,Ask,8,sl,tp,mdesc);
-               if(t > 2){
-                  l_zigzag = zigzag;
-                  OrderDelete(l_t);
-                  l_t = t;
-               }*/
             }
             else if(t > 2){
                l_zigzag = zigzag;
-               //OrderDelete(l_t);
-               //l_t = t;
             }
          }
          else if(order == OP_BUY){
