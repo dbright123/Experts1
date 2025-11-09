@@ -48,7 +48,7 @@ void OnTick()
    double zigzag = iCustom(market,tf,"zigzag",0,0);
    double atr = iATR(market,tf,14,0);
    
-   double ema50 = iMA(market,tf,50,0,MODE_EMA,PRICE_CLOSE,0), ema200 = iMA(market,tf,200,0,MODE_EMA,PRICE_CLOSE,0);
+   double ema50 = iMA(market,tf,50,0,MODE_EMA,PRICE_CLOSE,0), ema21 = iMA(market,tf,21,0,MODE_EMA,PRICE_CLOSE,0), ema200 = iMA(market,tf,200,0,MODE_EMA,PRICE_CLOSE,0);
    double e1 = 0, e2 = 0;
    //Main Operation
    double cp = iClose(market,tf,0);
@@ -71,7 +71,7 @@ void OnTick()
                      if(zigzag > ema50 && zigzag > iClose(market,tf,p)){
                         //buy operation
                         e2 = zigzag;
-                        marketOrder(market,OP_BUY,lotsize,e2,p);
+                        marketOrder(market,OP_BUY,e2,p);
                      }
                      break;
                   }
@@ -99,7 +99,7 @@ void OnTick()
                      if(zigzag > ema50 && zigzag > iClose(market,tf,p)){
                         //sell operation
                         e2 = zigzag;
-                        marketOrder(market,OP_SELL,lotsize,e2,p);
+                        marketOrder(market,OP_SELL,e2,p);
                      }
                      break;
                   }
@@ -109,7 +109,7 @@ void OnTick()
          }
       }
    }
-   breakeven2();
+   breakeven();
    //removeTrade();
   }
 //+------------------------------------------------------------------+
@@ -117,7 +117,7 @@ void OnTick()
 //+------------------------------------------------------------------+
 //Write the code on mql5 and save yourself all the useless troubles and over thinking
 
-void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zigzag,int shift){
+void marketOrder(string market, ENUM_ORDER_TYPE order,double zigzag,int shift){
    if(OrdersTotal() < total_market){
       double atr = iATR(market,tf,14,0);
       double atr2 = iATR(market,tf,14,shift);
@@ -188,69 +188,6 @@ void marketOrder(string market, ENUM_ORDER_TYPE order, double lotsize,double zig
 }
 
 void breakeven(){
-   double be = 0, zigzag = 0;
-   //tf = PERIOD_M5;
-   for(int i = 0; i < OrdersTotal(); i++){
-      if(OrderSelect(i,SELECT_BY_POS)){
-        if(OrderComment() == mdesc){
-         if(OrderType() == OP_BUY){
-            if(OrderOpenPrice() > OrderStopLoss()){
-               if(OrderClosePrice() > OrderOpenPrice()){
-                  be = (OrderClosePrice() + OrderOpenPrice()) / 2.0;
-                  if(OrderClosePrice() > be){
-                     if(OrderModify(OrderTicket(),OrderOpenPrice(),be,OrderTakeProfit(),0)){
-                        Alert(OrderSymbol()," now has a breakeven");
-                     }
-                  }
-               }
-            }else{
-               for(int i = 0; i < Bars; i++){
-                  zigzag = iCustom(OrderSymbol(),PERIOD_M5,"zigzag",0,i); 
-                  if(zigzag != 0  && iClose(OrderSymbol(),PERIOD_M5,i) > zigzag){
-                     if(zigzag > OrderStopLoss()){
-                        if(OrderClosePrice() > zigzag){
-                           if(OrderModify(OrderTicket(),OrderOpenPrice(),zigzag,OrderTakeProfit(),0)){
-                              Alert(OrderSymbol()," now has a breakeven");
-                           }
-                        }
-                     }
-                     break;
-                  }
-               }
-            }
-         }
-         else if(OrderType() == OP_SELL){
-            if(OrderOpenPrice() < OrderStopLoss()){
-               if(OrderClosePrice() < OrderOpenPrice()){
-                  be = (OrderClosePrice() + OrderOpenPrice()) / 2.0;
-                  if(OrderClosePrice() < be){
-                     if(OrderModify(OrderTicket(),OrderOpenPrice(),be,OrderTakeProfit(),0)){
-                        Alert(OrderSymbol()," now has a breakeven");
-                     }
-                  }
-               }
-            }else{
-               for(int i = 0; i < Bars; i++){
-                  zigzag = iCustom(OrderSymbol(),PERIOD_M5,"zigzag",0,i); 
-                  if(zigzag != 0 && iClose(OrderSymbol(),PERIOD_M5,i) > zigzag){
-                     if(zigzag < OrderStopLoss()){
-                        if(OrderClosePrice() < zigzag){
-                           if(OrderModify(OrderTicket(),OrderOpenPrice(),zigzag,OrderTakeProfit(),0)){
-                              Alert(OrderSymbol()," now has a breakeven");
-                           }
-                        }
-                     }
-                     break;
-                  }
-               }
-            }
-         }
-        }
-      }
-   }
-}
-
-void breakeven2(){
    double be = 0;
    double th = 0;
    for(int i = 0; i < OrdersTotal(); i++){
